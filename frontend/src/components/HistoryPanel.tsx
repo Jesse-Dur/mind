@@ -7,6 +7,7 @@ const ACTION_LABELS: Record<string, string> = {
   "tile.rename": "Renamed tile",
   "tile.delete": "Deleted tile",
   "thought.create": "Added thought",
+  "thought.update": "Edited thought",
   "thought.tag": "Tagged thought",
   "thought.delete": "Deleted thought",
   "ai.process": "AI processed",
