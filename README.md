@@ -17,7 +17,7 @@ Privacy is important to me, so I designed Mind to run fully locally and have a s
 
 You're welcome to open issues, fork the project, make it commercial, heck i dont care. All i ask is you be a good person & that's the terms you agree to by interacting with this project. 
 
-If you'd prefer a hosted version for whatever reason, i offer one at [website URL] that's also fully open-source [here].
+If you'd prefer a hosted version for whatever reason, i offer one at [website URL i haven't made yet] that's also fully open-source [at this fork i haven't forked yet].
 
 ---
 
