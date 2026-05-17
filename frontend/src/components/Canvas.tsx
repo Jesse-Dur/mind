@@ -18,17 +18,12 @@ export function Canvas() {
   const CANVAS_W = Math.floor(Math.round(canvasHeight * (16 / 9)) / GRID) * GRID
   const [draft, setDraft] = useState<Draft | null>(null)
   const [scale, setScale] = useState(1)
-  const [offset, setOffset] = useState({ x: 0, y: 0 })
   const canvasRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     function updateScale() {
       const s = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H)
       setScale(s)
-      setOffset({
-        x: Math.floor((window.innerWidth - CANVAS_W * s) / 2),
-        y: Math.floor((window.innerHeight - CANVAS_H * s) / 2),
-      })
     }
     updateScale()
     window.addEventListener("resize", updateScale)
@@ -45,7 +40,8 @@ export function Canvas() {
   }
 
   function toCanvas(clientX: number, clientY: number) {
-    return { x: (clientX - offset.x) / scale, y: (clientY - offset.y) / scale }
+    const rect = canvasRef.current!.getBoundingClientRect()
+    return { x: (clientX - rect.left) / scale, y: (clientY - rect.top) / scale }
   }
 
   function onMouseDown(e: React.MouseEvent<HTMLDivElement>) {
@@ -77,7 +73,7 @@ export function Canvas() {
   }
 
   return (
-    <div style={{ position: "fixed", inset: 0, overflow: "hidden", background: "#f5f5f5" }}>
+    <div style={{ position: "fixed", inset: 0, overflow: "hidden", background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div
         ref={canvasRef}
         onMouseDown={onMouseDown}
@@ -88,7 +84,7 @@ export function Canvas() {
           width: CANVAS_W,
           height: CANVAS_H,
           transformOrigin: "top left",
-          transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
+          zoom: scale,
           backgroundImage: "radial-gradient(circle, #c8c8c8 1px, transparent 1px)",
           backgroundSize: `${GRID}px ${GRID}px`,
           cursor: "crosshair",

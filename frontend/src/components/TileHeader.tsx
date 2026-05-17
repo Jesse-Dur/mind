@@ -15,37 +15,30 @@ export function TileHeader({ tile, onDragDown, editing, setEditing }: { tile: Ti
         style={{ padding: "8px 10px", cursor: "grab", flex: 1, display: "flex", alignItems: "center", overflow: "hidden", gap: 6 }}
       >
         <span onMouseDown={(e) => { if (editing) (document.activeElement as HTMLElement)?.blur(); onDragDown(e) }} style={{ color: "#ccc", fontSize: 11, flexShrink: 0, cursor: "grab", userSelect: "none" }}>⠿</span>
-        {editing ? (
-          <input
-            autoFocus
-            defaultValue={tile.title}
-            onBlur={(e) => {
-              const t = e.currentTarget.value
-              if (t !== tile.title) updateTile(tile.id, { title: t })
-              setEditing(false)
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === "Tab") { e.preventDefault(); e.currentTarget.blur() }
-              if (e.key === "Escape") { setEditing(false) }
-            }}
-            style={{ fontSize: 13, fontWeight: 600, color: "#1a1a1a", outline: "none", cursor: "text", border: "none", background: "transparent", padding: 0, width: "100%", fontFamily: "inherit" }}
-          />
-        ) : (
-          <span
-            onMouseDown={(e) => {
-              const startX = e.clientX
-              const startY = e.clientY
-              onDragDown(e)
-              const onUp = (up: MouseEvent) => {
-                window.removeEventListener("mouseup", onUp)
-                const moved = Math.abs(up.clientX - startX) > 3 || Math.abs(up.clientY - startY) > 3
-                if (!moved) setEditing(true)
-              }
-              window.addEventListener("mouseup", onUp)
-            }}
-            style={{ fontSize: 13, fontWeight: 600, color: "#1a1a1a", cursor: "text", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-          >{tile.title}</span>
-        )}
+        <input
+          defaultValue={tile.title}
+          onFocus={() => setEditing(true)}
+          onBlur={(e) => {
+            const t = e.currentTarget.value
+            if (t !== tile.title) updateTile(tile.id, { title: t })
+            setEditing(false)
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === "Tab") { e.preventDefault(); e.currentTarget.blur() }
+            if (e.key === "Escape") { e.currentTarget.blur() }
+          }}
+          ref={(el) => { if (el) el.addEventListener("scroll", () => { el.scrollLeft = 0 }) }}
+          onMouseDown={(e) => e.stopPropagation()}
+          style={{
+            fontSize: 13, fontWeight: 600, color: "#1a1a1a",
+            outline: "none", border: "none", background: "transparent",
+            padding: 0, fontFamily: "inherit",
+            cursor: "text",
+            userSelect: editing ? "text" : "none",
+            fieldSizing: "content",
+            minWidth: 4, maxWidth: "100%",
+          } as React.CSSProperties}
+        />
       </div>
       <div style={{ marginRight: 6 }}><CloseButton onClick={() => removeTile(tile.id)} size={22} /></div>
     </div>
