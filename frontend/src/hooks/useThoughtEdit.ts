@@ -38,5 +38,5 @@ export function useThoughtEdit(thought: Thought) {
     }
   }
 
-  return { editing, saving, content, didFocus, startEditing, cancelEditing, saveEditing }
+  return { editing, saving, content, saveEditing, startEditing, cancelEditing }
 }

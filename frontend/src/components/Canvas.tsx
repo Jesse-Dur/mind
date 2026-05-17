@@ -88,7 +88,6 @@ export function Canvas() {
           backgroundImage: "radial-gradient(circle, #c8c8c8 1px, transparent 1px)",
           backgroundSize: `${GRID}px ${GRID}px`,
           cursor: "crosshair",
-          userSelect: "none",
         }}
       >
         {tiles.filter((t) => t.visible).map((tile) => (

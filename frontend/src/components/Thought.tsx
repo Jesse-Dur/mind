@@ -22,7 +22,7 @@ export function Thought({ thought, onDragStart, onDragOver, onDrop, dragging }: 
   const isNew = newThoughtIds.has(thought.id)
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null)
   const [localTags, setLocalTags] = useState(thought.tags)
-  const { editing, saving, content, didFocus, startEditing, cancelEditing, saveEditing } = useThoughtEdit(thought)
+  const { editing, saving, content, saveEditing, startEditing, cancelEditing } = useThoughtEdit(thought)
 
   async function remove(e: React.MouseEvent) {
     e.stopPropagation()
@@ -59,34 +59,18 @@ export function Thought({ thought, onDragStart, onDragOver, onDrop, dragging }: 
       >
         <span style={{ color: "#ccc", flexShrink: 0, fontSize: 11 }}>⠿</span>
         <div style={{ flex: 1, minWidth: 0 }}>
-          {editing ? (
-            <span
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => saveEditing(e.currentTarget.textContent ?? "")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur() }
-                if (e.key === "Escape") cancelEditing()
-              }}
-              ref={(el) => {
-                if (el && !didFocus.current) {
-                  didFocus.current = true
-                  el.focus()
-                  const r = document.createRange()
-                  r.selectNodeContents(el)
-                  r.collapse(false)
-                  window.getSelection()?.removeAllRanges()
-                  window.getSelection()?.addRange(r)
-                }
-              }}
-              style={{ color: "#1a1a1a", outline: "none", cursor: "text", userSelect: "text", fontSize: 13 }}
-            >{thought.content}</span>
-          ) : (
-            <span
-              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startEditing() }}
-              style={{ color: "#1a1a1a", userSelect: "text", cursor: "text" }}
-            >{content}</span>
-          )}
+          <span
+            contentEditable
+            suppressContentEditableWarning
+            onFocus={startEditing}
+            onBlur={(e) => saveEditing(e.currentTarget.textContent ?? "")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur() }
+              if (e.key === "Escape") { e.currentTarget.blur(); cancelEditing() }
+            }}
+            onMouseDown={(e) => { if (e.buttons === 1 && window.getSelection()?.toString()) return; e.stopPropagation() }}
+            style={{ color: "#1a1a1a", outline: "none", cursor: "text", userSelect: "text", fontSize: 13 }}
+          >{content}</span>
         </div>
         <ThoughtTags tags={localTags} />
         {saving && <SavingSpinner />}
