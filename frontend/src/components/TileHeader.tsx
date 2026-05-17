@@ -35,6 +35,7 @@ export function TileHeader({ tile, onDragDown, editing, setEditing }: { tile: Ti
             onMouseDown={(e) => {
               const startX = e.clientX
               const startY = e.clientY
+              onDragDown(e)
               const onUp = (up: MouseEvent) => {
                 window.removeEventListener("mouseup", onUp)
                 const moved = Math.abs(up.clientX - startX) > 3 || Math.abs(up.clientY - startY) > 3

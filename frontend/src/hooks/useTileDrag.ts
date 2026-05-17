@@ -7,7 +7,7 @@ function snap(n: number) { return Math.round(n / GRID) * GRID }
 
 export function useTileDrag(tile: Tile, scale: number) {
   const { updateTile, canvasHeight } = useStore()
-  const CANVAS_W = Math.round(canvasHeight * (16 / 9))
+  const CANVAS_W = Math.floor(Math.round(canvasHeight * (16 / 9)) / GRID) * GRID
   const CANVAS_H = canvasHeight
   const drag = useRef<{ mx: number; my: number; tx: number; ty: number } | null>(null)
   const resize = useRef<{ mx: number; my: number; tw: number; th: number } | null>(null)
@@ -17,6 +17,10 @@ export function useTileDrag(tile: Tile, scale: number) {
     e.stopPropagation()
     const startX = e.clientX
     const startY = e.clientY
+    const tileWidth = tile.width
+    const tileHeight = tile.height
+    const maxX = Math.floor((CANVAS_W - tileWidth) / GRID) * GRID
+    const maxY = Math.floor((CANVAS_H - tileHeight) / GRID) * GRID
     let moved = false
     drag.current = { mx: e.clientX, my: e.clientY, tx: tile.x, ty: tile.y }
 
@@ -25,8 +29,8 @@ export function useTileDrag(tile: Tile, scale: number) {
       if (!moved && (Math.abs(e.clientX - startX) > 4 || Math.abs(e.clientY - startY) > 4)) moved = true
       if (!moved) return
       e.preventDefault()
-      const x = Math.max(0, Math.min(snap((drag.current.tx + (e.clientX - drag.current.mx) / scale)), snap(CANVAS_W - tile.width)))
-      const y = Math.max(0, Math.min(snap((drag.current.ty + (e.clientY - drag.current.my) / scale)), snap(CANVAS_H - tile.height)))
+      const x = Math.max(0, Math.min(snap((drag.current.tx + (e.clientX - drag.current.mx) / scale)), maxX))
+      const y = Math.max(0, Math.min(snap((drag.current.ty + (e.clientY - drag.current.my) / scale)), maxY))
       updateTile(tile.id, { x, y })
     }
 
