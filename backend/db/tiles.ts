@@ -23,8 +23,11 @@ export const tilesDb = {
     const keys = Object.keys(data)
     const fields = keys.map((k) => `${k} = ?`).join(", ")
     const values = keys.map((k) => (data as Record<string, unknown>)[k])
-    const tile = db.query(`UPDATE tiles SET ${fields} WHERE id = ? RETURNING *`).get(...values, id) as Tile
-    if (data.title) historyDb.log("tile.rename", `Renamed tile to "${data.title}"`, { tile_id: id, title: data.title })
+    const tile = db.query(`UPDATE tiles SET ${fields} WHERE id = ? RETURNING *`).get(...[...values, id] as unknown as [number]) as Tile
+    if (data.title) {
+      console.log(`[tile.update] "${data.title}" (id: ${id})`)
+      historyDb.log("tile.update", `Renamed tile to "${data.title}"`, { tile_id: id, title: data.title })
+    }
     return tile
   },
 
